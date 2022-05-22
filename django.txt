@@ -1,0 +1,234 @@
+'django-insecure-)vuwf@r3mbsk)x@)%gpmm9z&yfipq^%-u1aav7y#e(6=dk(r-g'
+1-) django-admin startproject blogapp
+2-) py manage.py runserver
+
+3-) VENV ORTAMI
+    py -m venv tutorial-env
+
+4-) APP EKLEME
+    py manage.py startapp blog
+    setting e git install apps e ekle 'blog'
+
+5-) URL YAPISI
+    ilk önce yeni eklenen app dizinine urls.py olustur
+    ardindan orayi doldur
+    path("/index",views.index()) gibi
+    ama viewsi önceden hazirla ve cagri    
+    ""
+        from django.urls import path
+        from . import views
+        #127.0.0.1:8000/            => index
+        #127.0.0.1:8000/index       => index
+        #127.0.0.1:8000/blogs       => blogs
+        #127.0.0.1:8000/blogs/3       => blogs/3 detail
+        
+        urlpatterns = [
+            path("",views.index),
+            path("index",views.index),
+            path("blogs",views.blogs),
+            path("blogs/<int:id>",views.blog_details), # en önemlisi
+        ]
+    ""
+    yazdiktan sonra ana app altindaki urls.py ye tanit bunlari
+    urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('',include('blog.urls')),
+    ]
+
+6-) TEMPLATES 
+    html web sayfalari
+    blog altinda templates klasörü aç
+    views kodu     return render(request, 'index.html')
+    templates klasörü altina index.html kur
+    altını doldur
+    return render(request, 'blog/blog-details.html',
+    {
+        "id":id,
+    })
+
+7-) Sablon basetemplate
+    settings py e git
+    TEMPLATES = DIRS:[
+        BASE_DIR / "templates"
+    ]
+    ekle
+    ardından 
+    base.html i doldur
+    ""
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+        </head>
+        <body>
+            <ul>
+                <li><a href="">Home</a></li>
+                <li><a href="">Blogs</a></li>
+            </ul>
+            {% block content %}
+
+            {% endblock %}
+        </body>
+    </html>
+    ""
+    diğer sayfalari ise:
+    ""
+    {% extends "base.html" %}
+    {% block title %}Blog Details {% endblock %}
+
+    {% block content %}
+
+        <h1>blog details {{ id }}</h1>
+
+    {% endblock %}
+
+    {% endblock %}
+    ""
+    şeklinde doldur ve bağlanmış olur
+
+8-) Static Files
+    dizin => blog/static/blog/img/1.png
+
+    {% load static %}
+    <img src="{% static 'blog/img/1.png' %}" alt="">
+
+    ana dizindeki static'i açmak için
+    setting se ekle
+    ""
+        STATICFILES_DIRS = [
+        BASE_DIR / "static"
+        ]
+    ""
+    css files için
+
+    {% block css_files %} {% endblock  %}
+
+9-) partials 
+        navbar conteext felan hep burda toplanir
+    {% include 'partials/_navbar.html' %}
+
+10-) url kullanma
+        urls.py de verdiğin ismi 
+        <a class="navbar-brand" href="{% url 'home' %}">Blogapp</a>
+        şekline kullan
+
+        eğer
+        path("blogs/<int:id>",views.blog_details, name="blog_details"),
+        bu şekilde bizden input bekliyorsa 
+        <a href="{% url 'blog_details' 1 %}">
+        bu şekilde veririz
+        <a href="{% url 'blog_details' blog.id %}">
+        databaseden gelen bilgiyi bu şekilde kullanabiliriz
+
+11-) Datalari göstermek
+        views den böyle gönderiyorsun
+        context = {
+            "blogs":data["blogs"]
+        }
+        return render(request, 'blog/blogs.html',context)
+
+        html de böyle aliyorsun
+        {% for blog in blogs %}
+            {% include 'blog/partials/_blog.html' %} 
+        {% endfor %}
+        
+        blog a ise blog bak for un her elemani
+        <img class="img-fluid" src="{% static 'img/'|add:blog.image %}" alt="">
+        bu şekilde erişiyoruz
+        django filters
+
+        {{ blog.title }}
+        ayni şekilde böylede erişebiliriz
+
+        <a href="{% url 'blog_details' blog.id %}">
+
+12-) MODELS
+        model bir databasedir
+        
+            from django.db import models
+
+            class Blog(models.model):
+                title = models.CharField(max_length=200)
+                image = models.CharField(max_length=50)
+                description = models.TextField()
+                is_active = models.BooleanField()
+                is_home = models.BooleanField()
+
+
+        django quaries shell yardiyla yapiliyor
+        
+13-) admin ahmet123
+     ahmetyigit ahmet123
+
+14-) Admin panelinde bazi şeyleri görmek için
+    blog altindaki admin.py ye
+    register ile modelleri yükle
+
+    from django.contrib import admin
+    from .models import Blog, Category
+
+    admin.site.register(Category)
+    admin.site.register(Blog)
+
+15-) Admin panelinde isimleri değiştirimek için
+
+    def __str__(self):
+    return self.title
+
+16-) Admin.py üzerinde 
+    class BlogAdmin(admin.ModelAdmin):
+        ile bir çok özellik kullanilabilir
+        list_display = ("title","")
+
+
+    admin.site.register(Blog,BlogAdmin)
+
+    admin içersinde görünür yani
+
+17-) Slug Fields
+        slug olayi url de ki integer değerleri mantiksal değere dönüştüren bir olay
+        kisaca blog/1 => blog/django-kursu
+
+
+        yapmak için modele slug alani ekle
+        slug = models.SlugField(null=False, blank=True, unique=True,db_index=True,editable=False)
+        def save(self, *args, **kwargs):
+    
+            self.slug = slugify(self.name)
+
+            super().save(*args,**kwargs)
+
+
+18-) UPLOAD olaylari için ilk önce modelse imagefield gibi alanlar ekle ve onlarin zorunlu
+inputlarina bak
+        ardindan settings.py de 
+        MEDIA_ROOT = BASE_DIR / "uploads"
+        MEDIA_URL = "/images/" //takma isim
+        en önemli şey urls.py de 
+        + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) bunu ekle
+        ve html de ise  blog.image.url şeklinde çağiracağiz 
+
+19-) HTML kodlari için 
+
+        ckeditor indir ve setting.py ye tanit
+
+        builtin template yaz googla 
+        {{ blog.description|slice:"0:45"|striptags }}
+
+20-) One to Many
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
+    cascade eğer bir modelin kategorisi yoksa sil işime gelmez demek
+
+21-) Many To Many
+    categories = models.ManyToManyField(Category)
+
+22-) Form
+    <input type"passsword" class="form-control" name="passsword">
+    buradaki name e göre 
+    request.POST["username"]
+    views de hareket et
