@@ -1,4 +1,3 @@
-import re
 from django.shortcuts import render, redirect
 from .models import Customer
 from django.contrib.auth import authenticate, login, logout
@@ -6,7 +5,7 @@ from django.contrib.auth.models import User
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect('index')
+        return redirect('main')
     
     if request.method == "POST":
         first_name = request.POST["first_name"]
@@ -36,13 +35,13 @@ def register(request):
 
             login(request, customer)
 
-            return redirect('index')
+            return redirect('main')
 
     return render(request , 'register.html')
 
 def loginreq(request):
     if request.user.is_authenticated:
-        return redirect('index')
+        return redirect('main')
 
     if request.method == "POST":
         email = request.POST["email"]
@@ -53,7 +52,7 @@ def loginreq(request):
         if user is not None:
             login(request, user)
             print("here")
-            return redirect('index')
+            return redirect('main')
         else:
             print("patladin aq")
             return render(request, 'login.html',{
@@ -62,5 +61,3 @@ def loginreq(request):
 
     return render(request, "login.html")
 
-def main(request):
-    return render(request, "m.html")

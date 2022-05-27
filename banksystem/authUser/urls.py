@@ -5,5 +5,4 @@ urlpatterns = [
     path("register", views.register, name = "register"),
     path("login", views.loginreq, name = "login"),
     path("", views.loginreq),
-    path("main", views.main, name= "index")
 ]
