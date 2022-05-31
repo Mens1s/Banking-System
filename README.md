@@ -22,7 +22,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please contact me if you have any of ideas I am online at [LINKEDIN](https://www.linkedin.com/in/ahmetyigit1/)
 
 ## Screenshots
-![version___0.1](http://url/to/img.png)
+![version___0.1](https://github.com/Mens1s/Banking-System/blob/master/Real_Time.jpg?raw=true)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
