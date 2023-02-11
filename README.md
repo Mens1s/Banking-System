@@ -2,6 +2,9 @@
 We are offering you to get experience in stock market without using real money. Every user starts with 100.000$ and they can buy, sell or open short operation in our web-app.
 You can access real time stock prices in our BANK APP!
 
+## Version 2.0
+I am adding some features to original project.
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
